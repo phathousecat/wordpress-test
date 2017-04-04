@@ -299,18 +299,30 @@ function set_instagram_url() { ?>
 
 function global_profile_settings_setup() {
   wp_enqueue_media();
-  add_settings_section( 'section', 'Social Media Links', null, 'theme-options' );
+	add_settings_section( 'section', 'Profile', null, 'theme-options' );
+	add_settings_field( 'sidebar_summary', 'Sidebar Summary', 'get_sidebar_summary', 'theme-options', 'section' );
   add_settings_field( 'youtube', 'YouTube URL', 'set_youtube_url', 'theme-options', 'section' );
   add_settings_field( 'twitter', 'Twitter URL', 'set_twitter_url', 'theme-options', 'section' );
   add_settings_field( 'instagram', 'Instagram URL', 'set_instagram_url', 'theme-options', 'section' );
   add_settings_field( 'about_img', 'About Me Image', 'upload_about_image', 'theme-options', 'section' );
+  add_settings_field( 'sidebar_img', 'Sidebar Image', 'upload_sidebar_image', 'theme-options', 'section' );
 
+  register_setting('section', 'sidebar_summary');
   register_setting('section', 'youtube');
   register_setting('section', 'twitter');
   register_setting('section', 'instagram');
   register_setting('section', 'about_img');
+  register_setting('section', 'sidebar_img');
 }
 add_action( 'admin_init', 'global_profile_settings_setup' );
+
+// ********************
+//  Sidebar Summary
+// ********************
+
+function get_sidebar_summary() { ?>
+  <textarea type="text" rows="3" cols="55" name="sidebar_summary" id="sidebar_summary"><?php echo get_option( 'sidebar_summary' ); ?></textarea>
+<?php }
 
 // ********************
 //  About Me Image
@@ -319,7 +331,7 @@ add_action( 'admin_init', 'global_profile_settings_setup' );
 function upload_about_image( ) { ?>
   <p>
 		<input type="text" name="about_img" id="about_img" class="meta-image regular-text" value="<?php echo $meta['image']; ?>">
-		<input type="button" class="button image-upload" value="Browse">
+		<input type="button" class="button about-image-upload" value="Browse">
 	</p>
   <?php echo $meta['about_img']; ?>
   <?php print $meta; ?>
@@ -327,7 +339,48 @@ function upload_about_image( ) { ?>
   <script>
     jQuery(document).ready(function ($) {
     	var media_uploader;
-    	$('.image-upload').click(function (e) {
+    	$('.about-image-upload').click(function (e) {
+    		e.preventDefault();
+    		var meta_image = $(this).parent().children('.meta-image');
+    		// If the frame already exists, re-open it.
+    		if (media_uploader) {
+    			media_uploader.open();
+    			return;
+    		}
+    		// Sets up the media library frame
+    		media_uploader = wp.media.frames.media_uploader = wp.media({
+    			title: meta_image.title,
+    			button: {
+    				text: meta_image.button
+    			}
+    		});
+
+    		media_uploader.on('select', function () {
+    			var media_attachment = media_uploader.state().get('selection').first().toJSON();
+    			meta_image.val(media_attachment.url);
+    		});
+    		media_uploader.open();
+    	});
+    });
+  </script>
+<?php }
+
+// ********************
+//  Sidebar Image
+// ********************
+
+function upload_sidebar_image( ) { ?>
+  <p>
+		<input type="text" name="sidebar_img" id="sidebar_img" class="meta-image regular-text" value="<?php echo $meta['image']; ?>">
+		<input type="button" class="button sidebar-image-upload" value="Browse">
+	</p>
+  <?php echo $meta['sidebar_img']; ?>
+  <?php print $meta; ?>
+	<div class="image-preview"><img src="<?php echo get_option( 'sidebar_img' ); ?>" style="max-width: 250px;"></div>
+  <script>
+    jQuery(document).ready(function ($) {
+    	var media_uploader;
+    	$('.sidebar-image-upload').click(function (e) {
     		e.preventDefault();
     		var meta_image = $(this).parent().children('.meta-image');
     		// If the frame already exists, re-open it.

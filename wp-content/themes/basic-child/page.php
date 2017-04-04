@@ -31,7 +31,7 @@
 			}
 
 			if ( is_page('about') ) { ?>
-	      <img src="<?php echo get_option('about_img'); ?>"</img><?php
+	      <img src="<?php echo get_option('about_img'); ?>"></img><?php
 			}
 
 		endwhile; ?>

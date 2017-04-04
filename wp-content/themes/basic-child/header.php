@@ -6,6 +6,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Oswald|Abel" media="screen">
+	<script src="https://use.fontawesome.com/67616f6313.js" async></script>
 	<?php wp_head(); ?>
 
 </head>
